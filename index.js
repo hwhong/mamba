@@ -1,26 +1,5 @@
-const COLUMNS = 18;
-const ROW_TEMPLATE = '<input type="checkbox"/>'.repeat(COLUMNS);
-
-const easy = {
-  currentScore: 0,
-  currentRow: 1,
-  currentMultiplier: 1,
-
-  // time in ms to swing pendulum from side to the other
-  currentSpeed: 1000,
-
-  // initial width of the pendulum
-  currentWidth: 6
-};
-
-const hard = {
-  ...easy,
-  currentMultiplier: 3,
-  currentSpeed: 600,
-  currentWidth: 4
-};
-
-let currentSettings = easy;
+const SIZE = 18;
+const ROW_TEMPLATE = '<input type="checkbox"/>'.repeat(SIZE);
 
 let game = document.getElementById("game");
 let canvas = document.getElementById("game-canvas");
@@ -30,17 +9,16 @@ let modeButton = document.getElementById("mode");
 let restartButton = document.getElementById("restart");
 
 let rows;
-let rowHeight;
-let state;
 
-let startTime;
-
-let xCoordinate = 0;
 let yCoordinate = 0;
+let xCoordinate = 0;
 
 let snake;
-let head = { xCoordinate: 5, yCoordinate: 5 };
-let tail = 5;
+let head = { yCoordinate: 5, xCoordinate: 5 };
+let currentLength = 5;
+
+let xRing;
+let yRing;
 
 // window.onresize = resize;
 // restartButton.onmousedown = reset;
@@ -49,23 +27,23 @@ document.onkeydown = event => {
   switch (event.keyCode) {
     // left arrow
     case 37:
-      xCoordinate = 0;
-      yCoordinate = -1;
+      yCoordinate = 0;
+      xCoordinate = -1;
       break;
     case 38:
       // up arrow
-      xCoordinate = 1;
-      yCoordinate = 0;
+      yCoordinate = 1;
+      xCoordinate = 0;
       break;
     case 39:
       // right arrow
-      xCoordinate = 0;
-      yCoordinate = 1;
+      yCoordinate = 0;
+      xCoordinate = 1;
       break;
     case 40:
       // down arrow
-      xCoordinate = -1;
-      yCoordinate = 0;
+      yCoordinate = -1;
+      xCoordinate = 0;
       break;
   }
   step();
@@ -78,7 +56,6 @@ document.onkeydown = event => {
 // }
 
 build();
-// reset();
 paint();
 
 function build() {
@@ -98,51 +75,6 @@ function build() {
   return true;
 }
 
-// function reset() {
-//   setState("playing");
-
-//   // rows.forEach(row => row.forEach(box => (box.checked = false)));
-
-//   startTime = Date.now();
-
-//   ({
-//     currentRow,
-//     currentSpeed,
-//     currentWidth,
-//     currentScore,
-//     currentMultiplier
-//   } = currentSettings);
-
-//   selectSnakeSegments();
-
-//   score.innerHTML = "score <em>" + currentScore + "</em>";
-// }
-
-// function resize() {
-//   if (build()) reset();
-// }
-
-// function click(event) {
-//   if (!event.type.startsWith("key") && event.target.matches("a, button"))
-//     return;
-
-//   event.preventDefault();
-
-//   if (state === "playing") {
-//     step();
-//   } else {
-//     reset();
-//   }
-// }
-
-// function setState(value) {
-//   state = value;
-
-//   if (state === "playing") status.textContent = "press space or tap";
-//   else if (state === "won") status.textContent = "🏅you rock ✌️🦄";
-//   else if (state === "lost") status.textContent = "checkmate 💥";
-// }
-
 function generateRow() {
   let row = document.createElement("div");
   row.className = "row";
@@ -156,30 +88,36 @@ function generateRow() {
 }
 
 function step() {
-  head.xCoordinate += xCoordinate;
+  // handle user direction inputs
   head.yCoordinate += yCoordinate;
+  head.xCoordinate += xCoordinate;
 
-  let rowLength = row[0].length;
-
-  if (head.xCoordinate < 0) {
-    head.xCoordinate = rowLength - 1;
-  }
-  if (head.xCoordinate > rowLength - 1) {
-    head.xCoordinate = 0;
-  }
+  // handle out of bound
   if (head.yCoordinate < 0) {
-    head.yCoordinate = rowHeight - 1;
+    head.yCoordinate = SIZE - 1;
   }
-  if (head.yCoordinate > rowsLength - 1) {
+  if (head.yCoordinate > SIZE - 1) {
     head.yCoordinate = 0;
   }
+  if (head.xCoordinate < 0) {
+    head.xCoordinate = SIZE - 1;
+  }
+  if (head.xCoordinate > SIZE - 1) {
+    head.xCoordinate = 0;
+  }
 
-  snake.push({ xCoordinate: head.xCoordinate, yCoordinate: head.yCoordinate });
-  while (snake.length > tail) {
+  // move the snake
+  snake.push({ yCoordinate: head.yCoordinate, xCoordinate: head.xCoordinate });
+  while (snake.length > currentLength) {
+    // removes the first element in the array
     snake.shift();
   }
 
-  // check if snake head is at food
+  // check if snake head is at ring
+  if (head.xCoordinate === xRing && head.yCoordinate === yRing) {
+    currentLength++;
+    removeRing();
+  }
 }
 
 function paint() {
@@ -189,11 +127,19 @@ function paint() {
 
 function selectSnakeSegments() {
   // row then column
-  rows.forEach((row, i) => {
-    row.forEach((box, j) => {
+  rows.forEach((row, j) => {
+    row.forEach((box, i) => {
       box.checked = snake.some(
-        segment => segment.xCoordinate === i && segment.yCoordinate === j
+        segment => segment.yCoordinate === j && segment.xCoordinate === i
       );
     });
   });
+}
+
+function setRing() {
+  rows[xRing][yRing].checked = true;
+}
+
+function removeRing() {
+  rows[xRing][yRing].checked = true;
 }
