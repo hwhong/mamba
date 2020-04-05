@@ -35,14 +35,15 @@ let state;
 
 let startTime;
 
-let xCoordinate;
-let yCoordinate;
+let xCoordinate = 0;
+let yCoordinate = 0;
 
 let snake;
+let head = { xCoordinate: 5, yCoordinate: 5 };
 
-window.onresize = resize;
-restartButton.onmousedown = reset;
-modeButton.onmousedown = toggleMode;
+// window.onresize = resize;
+// restartButton.onmousedown = reset;
+// modeButton.onmousedown = toggleMode;
 document.onkeydown = event => {
   switch (event.keyCode) {
     case 37:
@@ -64,28 +65,29 @@ document.onkeydown = event => {
   }
 };
 
-if ("ontouchstart" in window) {
-  window.ontouchstart = click;
-} else {
-  window.onmousedown = click;
-}
+// if ("ontouchstart" in window) {
+//   window.ontouchstart = click;
+// } else {
+//   window.onmousedown = click;
+// }
 
 build();
-reset();
+// reset();
 paint();
 
 function build() {
   let canvasHeight = canvas.offsetHeight;
 
   // only rebuild if the number of rows has changed
-  if (
-    typeof rowHeight === "number" &&
-    rows.length === Math.floor(canvasHeight / rowHeight) - 1
-  ) {
-    return false;
-  }
+  // if (
+  //   typeof rowHeight === "number" &&
+  //   rows.length === Math.floor(canvasHeight / rowHeight) - 1
+  // ) {
+  //   return false;
+  // }
 
-  rows = [{ xCoordinate: 5, yCoordinate: 5 }];
+  rows = [];
+  snake = [head];
   canvas.innerHTML = "";
 
   let firstRow = generateRow();
@@ -98,50 +100,50 @@ function build() {
   return true;
 }
 
-function reset() {
-  setState("playing");
+// function reset() {
+//   setState("playing");
 
-  rows.forEach(row => row.forEach(box => (box.checked = false)));
+//   // rows.forEach(row => row.forEach(box => (box.checked = false)));
 
-  startTime = Date.now();
+//   startTime = Date.now();
 
-  ({
-    currentRow,
-    currentSpeed,
-    currentWidth,
-    currentScore,
-    currentMultiplier
-  } = currentSettings);
+//   ({
+//     currentRow,
+//     currentSpeed,
+//     currentWidth,
+//     currentScore,
+//     currentMultiplier
+//   } = currentSettings);
 
-  selectSnakeSegments();
+//   selectSnakeSegments();
 
-  score.innerHTML = "score <em>" + currentScore + "</em>";
-}
+//   score.innerHTML = "score <em>" + currentScore + "</em>";
+// }
 
-function resize() {
-  if (build()) reset();
-}
+// function resize() {
+//   if (build()) reset();
+// }
 
-function click(event) {
-  if (!event.type.startsWith("key") && event.target.matches("a, button"))
-    return;
+// function click(event) {
+//   if (!event.type.startsWith("key") && event.target.matches("a, button"))
+//     return;
 
-  event.preventDefault();
+//   event.preventDefault();
 
-  if (state === "playing") {
-    step();
-  } else {
-    reset();
-  }
-}
+//   if (state === "playing") {
+//     step();
+//   } else {
+//     reset();
+//   }
+// }
 
-function setState(value) {
-  state = value;
+// function setState(value) {
+//   state = value;
 
-  if (state === "playing") status.textContent = "press space or tap";
-  else if (state === "won") status.textContent = "🏅you rock ✌️🦄";
-  else if (state === "lost") status.textContent = "checkmate 💥";
-}
+//   if (state === "playing") status.textContent = "press space or tap";
+//   else if (state === "won") status.textContent = "🏅you rock ✌️🦄";
+//   else if (state === "lost") status.textContent = "checkmate 💥";
+// }
 
 function generateRow() {
   let row = document.createElement("div");
@@ -155,44 +157,41 @@ function generateRow() {
   return row;
 }
 
-function step() {
-  currentWidth = 0;
+// function step() {
+//   currentWidth = 0;
 
-  // currentWidth = adjacent checked boxes on previous row
-  rows[currentRow].forEach((box, i) => {
-    if (box.checked && rows[currentRow - 1][i].checked) {
-      currentWidth += 1;
-    }
-  });
+//   // currentWidth = adjacent checked boxes on previous row
+//   rows[currentRow].forEach((box, i) => {
+//     if (box.checked && rows[currentRow - 1][i].checked) {
+//       currentWidth += 1;
+//     }
+//   });
 
-  currentRow += 1;
+//   currentRow += 1;
 
-  // score
-  let multiplier = currentMultiplier * (1 + currentRow / rows.length);
-  currentScore = Math.ceil(currentScore + currentWidth * multiplier);
+//   // score
+//   let multiplier = currentMultiplier * (1 + currentRow / rows.length);
+//   currentScore = Math.ceil(currentScore + currentWidth * multiplier);
 
-  // :(
-  if (currentWidth === 0) {
-    setState("lost");
-  }
-  // :)
-  else if (currentRow >= rows.length) {
-    currentScore += 30 * multiplier;
-    setState("won");
-  }
+//   // :(
+//   if (currentWidth === 0) {
+//     setState("lost");
+//   }
+//   // :)
+//   else if (currentRow >= rows.length) {
+//     currentScore += 30 * multiplier;
+//     setState("won");
+//   }
 
-  score.innerHTML = "score <em>" + currentScore + "</em>";
-}
+//   score.innerHTML = "score <em>" + currentScore + "</em>";
+// }
 
 function paint() {
-  if (state === "playing") {
-    let time = (Date.now() - startTime) % (currentSpeed * 2);
-    if (time > currentSpeed) time = currentSpeed * 2 - time;
+  selectSnakeSegments();
+  head.xCoordinate += xCoordinate;
+  head.yCoordinate += yCoordinate;
 
-    selectSnakeSegments();
-  }
-
-  requestAnimationFrame(paint);
+  requestAnimationFrame(paint, 1 / 60);
 }
 
 function selectSnakeSegments() {
