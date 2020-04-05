@@ -1,12 +1,8 @@
-const SIZE = 18;
+const SIZE = 24;
 const ROW_TEMPLATE = '<input type="checkbox"/>'.repeat(SIZE);
 
 let game = document.getElementById("game");
 let canvas = document.getElementById("game-canvas");
-let status = document.getElementById("game-status");
-let score = document.getElementById("game-score");
-let modeButton = document.getElementById("mode");
-let restartButton = document.getElementById("restart");
 
 let rows;
 
@@ -14,15 +10,12 @@ let yCoordinate = 0;
 let xCoordinate = 0;
 
 let snake;
-let head = { yCoordinate: 9, xCoordinate: 9 };
+let head = { yCoordinate: 12, xCoordinate: 12 };
 let currentLength = 5;
 
-let xRing = 13;
-let yRing = 4;
+let xRing = 5;
+let yRing = 5;
 
-// window.onresize = resize;
-// restartButton.onmousedown = reset;
-// modeButton.onmousedown = toggleMode;
 document.onkeydown = event => {
   switch (event.keyCode) {
     // left arrow
@@ -52,32 +45,19 @@ setInterval(paint, 1000 / 15);
 build();
 
 function build() {
-  let canvasHeight = canvas.offsetHeight;
-
   rows = [];
   snake = [head];
   canvas.innerHTML = "";
 
-  let firstRow = generateRow();
-  rowHeight = firstRow.offsetHeight;
+  for (let i = 0; i < 24; i++) {
+    let row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = ROW_TEMPLATE;
+    canvas.appendChild(row);
 
-  Array(Math.floor(canvasHeight / rowHeight) - 2)
-    .fill()
-    .map(generateRow);
-
-  return true;
-}
-
-function generateRow() {
-  let row = document.createElement("div");
-  row.className = "row";
-  row.innerHTML = ROW_TEMPLATE;
-  canvas.appendChild(row);
-
-  // creates a new, shallow-copied Array instance from an array-like or iterable object.
-  rows.unshift(Array.from(row.childNodes));
-
-  return row;
+    // creates a new, shallow-copied Array instance from an array-like or iterable object.
+    rows.unshift(Array.from(row.childNodes));
+  }
 }
 
 function step() {
@@ -102,7 +82,6 @@ function step() {
   // move the snake
   snake.push({ yCoordinate: head.yCoordinate, xCoordinate: head.xCoordinate });
   while (snake.length > currentLength) {
-    // removes the first element in the array
     snake.shift();
   }
 
@@ -118,6 +97,7 @@ function step() {
 function paint() {
   step();
   selectSnakeSegments();
+  rows[xRing][yRing].checked = true;
 }
 
 function selectSnakeSegments() {
