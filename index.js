@@ -40,6 +40,7 @@ let yCoordinate = 0;
 
 let snake;
 let head = { xCoordinate: 5, yCoordinate: 5 };
+let tail = 5;
 
 // window.onresize = resize;
 // restartButton.onmousedown = reset;
@@ -63,6 +64,7 @@ document.onkeydown = event => {
       yCoordinate = 1;
       break;
   }
+  step();
 };
 
 // if ("ontouchstart" in window) {
@@ -157,40 +159,20 @@ function generateRow() {
   return row;
 }
 
-// function step() {
-//   currentWidth = 0;
-
-//   // currentWidth = adjacent checked boxes on previous row
-//   rows[currentRow].forEach((box, i) => {
-//     if (box.checked && rows[currentRow - 1][i].checked) {
-//       currentWidth += 1;
-//     }
-//   });
-
-//   currentRow += 1;
-
-//   // score
-//   let multiplier = currentMultiplier * (1 + currentRow / rows.length);
-//   currentScore = Math.ceil(currentScore + currentWidth * multiplier);
-
-//   // :(
-//   if (currentWidth === 0) {
-//     setState("lost");
-//   }
-//   // :)
-//   else if (currentRow >= rows.length) {
-//     currentScore += 30 * multiplier;
-//     setState("won");
-//   }
-
-//   score.innerHTML = "score <em>" + currentScore + "</em>";
-// }
-
-function paint() {
-  selectSnakeSegments();
+function step() {
   head.xCoordinate += xCoordinate;
   head.yCoordinate += yCoordinate;
 
+  snake.push({ xCoordinate: head.xCoordinate, yCoordinate: head.yCoordinate });
+  while (snake.length > tail) {
+    snake.shift();
+  }
+
+  // check if snake head is at food
+}
+
+function paint() {
+  selectSnakeSegments();
   requestAnimationFrame(paint, 1 / 60);
 }
 
