@@ -14,11 +14,11 @@ let yCoordinate = 0;
 let xCoordinate = 0;
 
 let snake;
-let head = { yCoordinate: 5, xCoordinate: 5 };
+let head = { yCoordinate: 9, xCoordinate: 9 };
 let currentLength = 5;
 
-let xRing;
-let yRing;
+let xRing = 13;
+let yRing = 4;
 
 // window.onresize = resize;
 // restartButton.onmousedown = reset;
@@ -46,17 +46,10 @@ document.onkeydown = event => {
       xCoordinate = 0;
       break;
   }
-  step();
 };
 
-// if ("ontouchstart" in window) {
-//   window.ontouchstart = click;
-// } else {
-//   window.onmousedown = click;
-// }
-
+setInterval(paint, 1000 / 15);
 build();
-paint();
 
 function build() {
   let canvasHeight = canvas.offsetHeight;
@@ -115,14 +108,16 @@ function step() {
 
   // check if snake head is at ring
   if (head.xCoordinate === xRing && head.yCoordinate === yRing) {
+    xRing = Math.floor(Math.random() * SIZE);
+    yRing = Math.floor(Math.random() * SIZE);
+    rows[xRing][yRing].checked = true;
     currentLength++;
-    removeRing();
   }
 }
 
 function paint() {
+  step();
   selectSnakeSegments();
-  requestAnimationFrame(paint, 1 / 60);
 }
 
 function selectSnakeSegments() {
@@ -134,12 +129,4 @@ function selectSnakeSegments() {
       );
     });
   });
-}
-
-function setRing() {
-  rows[xRing][yRing].checked = true;
-}
-
-function removeRing() {
-  rows[xRing][yRing].checked = true;
 }
