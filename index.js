@@ -47,21 +47,25 @@ let tail = 5;
 // modeButton.onmousedown = toggleMode;
 document.onkeydown = event => {
   switch (event.keyCode) {
+    // left arrow
     case 37:
-      xCoordinate = -1;
-      yCoordinate = 0;
-      break;
-    case 38:
       xCoordinate = 0;
       yCoordinate = -1;
       break;
-    case 39:
+    case 38:
+      // up arrow
       xCoordinate = 1;
       yCoordinate = 0;
       break;
-    case 40:
+    case 39:
+      // right arrow
       xCoordinate = 0;
       yCoordinate = 1;
+      break;
+    case 40:
+      // down arrow
+      xCoordinate = -1;
+      yCoordinate = 0;
       break;
   }
   step();
@@ -79,14 +83,6 @@ paint();
 
 function build() {
   let canvasHeight = canvas.offsetHeight;
-
-  // only rebuild if the number of rows has changed
-  // if (
-  //   typeof rowHeight === "number" &&
-  //   rows.length === Math.floor(canvasHeight / rowHeight) - 1
-  // ) {
-  //   return false;
-  // }
 
   rows = [];
   snake = [head];
@@ -162,6 +158,21 @@ function generateRow() {
 function step() {
   head.xCoordinate += xCoordinate;
   head.yCoordinate += yCoordinate;
+
+  let rowLength = row[0].length;
+
+  if (head.xCoordinate < 0) {
+    head.xCoordinate = rowLength - 1;
+  }
+  if (head.xCoordinate > rowLength - 1) {
+    head.xCoordinate = 0;
+  }
+  if (head.yCoordinate < 0) {
+    head.yCoordinate = rowHeight - 1;
+  }
+  if (head.yCoordinate > rowsLength - 1) {
+    head.yCoordinate = 0;
+  }
 
   snake.push({ xCoordinate: head.xCoordinate, yCoordinate: head.yCoordinate });
   while (snake.length > tail) {
