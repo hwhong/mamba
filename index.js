@@ -1,10 +1,17 @@
 const SIZE = 24;
 const ROW_TEMPLATE = '<input type="checkbox"/>'.repeat(SIZE);
+const forbiddenInputPair = {
+  37: 39,
+  38: 40,
+  40: 38,
+  39: 37
+};
 
 let game = document.getElementById("game");
 let canvas = document.getElementById("game-canvas");
 
 let rows;
+let lastInput;
 
 let yCoordinate = 0;
 let xCoordinate = 0;
@@ -17,34 +24,39 @@ let xRing = 5;
 let yRing = 5;
 
 document.onkeydown = event => {
-  switch (event.keyCode) {
-    // left arrow
-    case 37:
-      yCoordinate = 0;
-      xCoordinate = -1;
-      break;
-    case 38:
-      // up arrow
-      yCoordinate = 1;
-      xCoordinate = 0;
-      break;
-    case 39:
-      // right arrow
-      yCoordinate = 0;
-      xCoordinate = 1;
-      break;
-    case 40:
-      // down arrow
-      yCoordinate = -1;
-      xCoordinate = 0;
-      break;
-  }
+  if (forbiddenInputPair[event.keyCode] !== lastInput)
+    switch (event.keyCode) {
+      // left arrow
+      case 37:
+        yCoordinate = 0;
+        xCoordinate = -1;
+        lastInput = 37;
+        break;
+      case 38:
+        // up arrow
+        yCoordinate = 1;
+        xCoordinate = 0;
+        lastInput = 38;
+        break;
+      case 39:
+        // right arrow
+        yCoordinate = 0;
+        xCoordinate = 1;
+        lastInput = 39;
+        break;
+      case 40:
+        // down arrow
+        yCoordinate = -1;
+        xCoordinate = 0;
+        lastInput = 40;
+        break;
+    }
 };
 
 setInterval(paint, 1000 / 15);
-build();
+buildCanvas();
 
-function build() {
+function buildCanvas() {
   rows = [];
   snake = [head];
   canvas.innerHTML = "";
@@ -79,6 +91,17 @@ function step() {
     head.xCoordinate = 0;
   }
 
+  // end game if snake eats itself
+  if (
+    snake.some(
+      segment =>
+        head.xCoordinate === segment.xCoordinate &&
+        head.yCoordinate === segment.yCoordinate
+    )
+  ) {
+    console.log("eat");
+  }
+
   // move the snake
   snake.push({ yCoordinate: head.yCoordinate, xCoordinate: head.xCoordinate });
   while (snake.length > currentLength) {
@@ -86,7 +109,7 @@ function step() {
   }
 
   // check if snake head is at ring
-  if (head.xCoordinate === xRing && head.yCoordinate === yRing) {
+  if (head.yCoordinate === xRing && head.xCoordinate === yRing) {
     xRing = Math.floor(Math.random() * SIZE);
     yRing = Math.floor(Math.random() * SIZE);
     rows[xRing][yRing].checked = true;
