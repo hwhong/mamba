@@ -14,7 +14,7 @@ let rows;
 let lastInput;
 
 let yCoordinate = 0;
-let xCoordinate = 0;
+let xCoordinate = 1;
 
 let snake;
 let head = { yCoordinate: 12, xCoordinate: 12 };
@@ -61,7 +61,7 @@ function buildCanvas() {
   snake = [head];
   canvas.innerHTML = "";
 
-  for (let i = 0; i < 24; i++) {
+  for (let i = 0; i < SIZE; i++) {
     let row = document.createElement("div");
     row.className = "row";
     row.innerHTML = ROW_TEMPLATE;
@@ -97,9 +97,10 @@ function step() {
       segment =>
         head.xCoordinate === segment.xCoordinate &&
         head.yCoordinate === segment.yCoordinate
-    )
+    ) &&
+    currentLength > 5
   ) {
-    console.log("eat");
+    reset();
   }
 
   // move the snake
@@ -115,6 +116,13 @@ function step() {
     rows[xRing][yRing].checked = true;
     currentLength++;
   }
+}
+
+function reset() {
+  alert("Game Over");
+  head = { yCoordinate: 12, xCoordinate: 12 };
+  snake = [head];
+  currentLength = 5;
 }
 
 function paint() {
