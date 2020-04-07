@@ -9,6 +9,7 @@ const forbiddenInputPair = {
 
 let game = document.getElementById("game");
 let canvas = document.getElementById("game-canvas");
+let gameScore = document.getElementById("score");
 
 let intervalCount;
 
@@ -21,6 +22,7 @@ let xCoordinate = 1;
 let snake;
 let head = { yCoordinate: 12, xCoordinate: 12 };
 let currentLength = 5;
+let score = 0;
 
 let xRing = 5;
 let yRing = 5;
@@ -54,7 +56,6 @@ document.onkeydown = event => {
         break;
     }
 };
-
 setInterval(paint, 1000 / 15);
 buildCanvas();
 
@@ -118,7 +119,10 @@ function step() {
     yRing = Math.floor(Math.random() * SIZE);
     rows[xRing][yRing].checked = true;
     currentLength++;
+    score++;
   }
+
+  gameScore.innerText = `${score}`;
 }
 
 function reset() {
@@ -127,6 +131,7 @@ function reset() {
   snake = [head];
   currentLength = 5;
   intervalCount = 0;
+  score = 0;
 }
 
 function paint() {

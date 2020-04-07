@@ -19,3 +19,8 @@ html {
   flex-grow: 2;
   text-align: center;
 }
+
+.score {
+  padding: 8px 24px;
+  margin: 0 auto;
+}
