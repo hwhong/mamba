@@ -10,6 +10,8 @@ const forbiddenInputPair = {
 let game = document.getElementById("game");
 let canvas = document.getElementById("game-canvas");
 
+let intervalCount;
+
 let rows;
 let lastInput;
 
@@ -60,6 +62,7 @@ function buildCanvas() {
   rows = [];
   snake = [head];
   canvas.innerHTML = "";
+  intervalCount = 0;
 
   for (let i = 0; i < SIZE; i++) {
     let row = document.createElement("div");
@@ -91,17 +94,17 @@ function step() {
     head.xCoordinate = 0;
   }
 
-  // end game if snake eats itself
-  if (
-    snake.some(
-      segment =>
-        head.xCoordinate === segment.xCoordinate &&
-        head.yCoordinate === segment.yCoordinate
-    ) &&
-    currentLength > 5
-  ) {
-    reset();
+  for (var i = 0; i < snake.length; i++) {
+    if (
+      snake[i].xCoordinate == head.xCoordinate &&
+      snake[i].yCoordinate == head.yCoordinate &&
+      intervalCount > 5
+    ) {
+      reset();
+    }
   }
+
+  // end game if snake eats itself
 
   // move the snake
   snake.push({ yCoordinate: head.yCoordinate, xCoordinate: head.xCoordinate });
@@ -123,12 +126,14 @@ function reset() {
   head = { yCoordinate: 12, xCoordinate: 12 };
   snake = [head];
   currentLength = 5;
+  intervalCount = 0;
 }
 
 function paint() {
   step();
   selectSnakeSegments();
   rows[xRing][yRing].checked = true;
+  intervalCount++;
 }
 
 function selectSnakeSegments() {
