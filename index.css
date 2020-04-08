@@ -2,14 +2,19 @@ body,
 html {
   overflow: hidden;
   height: 100%;
+  display: flex;
+  width: 100%;
 }
 
 .game {
-  position: relative;
-  display: flex;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   flex-direction: column;
-  height: 100%;
-  margin: 0 auto;
+  position: relative;
+  border-radius: 4px;
+  display: flex;
+  height: 550px;
+  width: 500px;
+  margin: auto;
 }
 
 .game-canvas {
@@ -21,6 +26,7 @@ html {
 }
 
 .score {
-  padding: 8px 24px;
-  margin: 0 auto;
+  margin: 30px 30px 0 30px;
+  justify-content: center;
+  display: flex;
 }
