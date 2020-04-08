@@ -8,6 +8,7 @@ html {
 
 .game {
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  transition: box-shadow 0.3s ease-in-out;
   flex-direction: column;
   position: relative;
   border-radius: 8px;
@@ -15,7 +16,6 @@ html {
   height: 550px;
   width: 500px;
   margin: auto;
-  transition: box-shadow 0.3s ease-in-out;
 }
 
 .game:hover {
