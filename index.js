@@ -122,7 +122,7 @@ function step() {
     score++;
   }
 
-  gameScore.innerText = `${score}`;
+  gameScore.innerText = `Score: ${score}`;
 }
 
 function reset() {
